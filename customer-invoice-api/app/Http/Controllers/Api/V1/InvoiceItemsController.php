@@ -16,7 +16,7 @@ class InvoiceItemsController extends Controller
      */
     public function index()
     {
-        //
+        return InvoiceItems::paginate(15);
     }
 
     /**

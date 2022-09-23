@@ -16,19 +16,19 @@ class CustomerSeeder extends Seeder
     public function run()
     {
         Customer::factory()
-                ->count(25)
+                ->count(5)
                 ->hasInvoices(10)
-                ->hasCustomerInvoiceItems(10)
+                ->hasCustomerInvoiceItems(2)
                 ->create();
         Customer::factory()
-                ->count(100)
-                ->hasInvoices(5)
-                ->hasCustomerInvoiceItems(10)
-                ->create();
-        Customer::factory()
-                ->count(100)
+                ->count(4)
                 ->hasInvoices(3)
-                ->hasCustomerInvoiceItems(10)
+                ->hasCustomerInvoiceItems(2)
+                ->create();
+        Customer::factory()
+                ->count(2)
+                ->hasInvoices(5)
+                ->hasCustomerInvoiceItems(2)
                 ->create();
         Customer::factory()
                 ->count(5)

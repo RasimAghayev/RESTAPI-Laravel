@@ -6,6 +6,7 @@ use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Models\Invoice;
 use App\Http\Controllers\Controller;
+use App\Http\Resource\V1\Customer;
 
 class InvoiceController extends Controller
 {
@@ -16,7 +17,7 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        //
+        return Invoice::paginate(15);
     }
 
     /**
@@ -46,9 +47,9 @@ class InvoiceController extends Controller
      * @param  \App\Models\Invoice  $invoice
      * @return \Illuminate\Http\Response
      */
-    public function show(Invoice $invoice)
+    public function show(Invoice  $invoice)
     {
-        //
+        return $invoice;
     }
 
     /**

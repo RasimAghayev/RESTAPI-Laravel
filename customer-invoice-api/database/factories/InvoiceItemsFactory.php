@@ -20,7 +20,7 @@ class InvoiceItemsFactory extends Factory
     {
         return [
             'customer_id'=>Customer::factory(),
-            'invoice_id'=>Invoice::factory(),
+            'invoice_id'=>Invoice::inRandomOrder()->first()->invoice_id,
             'item_id'=>$this->faker->numberBetween(1, 20),
             'vin'=>$this->faker->word(),
             'brend'=>$this->faker->word(),

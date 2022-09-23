@@ -19,3 +19,12 @@ php artisan make:model InvoiceItems --all
 
 
 php artisan migrate:fresh --seed
+
+php artisan make:resource V1/CustomerResource
+php artisan make:resource V1/InvoiceResource
+php artisan make:resource V1/InvoiceItemsResource
+
+
+
+
+php artisan make:resource V1\CustomerResource
