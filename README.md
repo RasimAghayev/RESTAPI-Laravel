@@ -3,6 +3,8 @@
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/36cc1e266722a67ae009?action=collection%2Fimport)
 
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://www.postman.com/lunar-shadow-319654/workspace/rest-api-laravel/collection/1965733-cfed0a88-bac0-4191-a785-bcfce1750cb5?action=share&creator=1965733)
+
 
 ## Command 
 
