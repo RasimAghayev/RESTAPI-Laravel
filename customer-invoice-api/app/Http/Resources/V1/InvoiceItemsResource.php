@@ -14,6 +14,17 @@ class InvoiceItemsResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return [
+            'customer_id'=>$this->customer_id,
+            'invoice_id'=>$this->invoice_id,
+            'item_id'=>$this->item_id,
+            'vin'=>$this->vin,
+            'brend'=>$this->brend,
+            'marka'=>$this->marka,
+            'sayi'=>$this->sayi,
+            'qiymeti'=>$this->qiymeti,
+            'cemi'=>$this->cemi,
+            'status'=>$this->status,
+        ];
     }
 }

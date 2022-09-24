@@ -16,7 +16,10 @@ return new class extends Migration
         Schema::create('invoice_items', function (Blueprint $table) {
             $table->id();
             $table->integer('customer_id');
-            $table->string('invoice_id');
+            $table->string('invoice_id',8);
+            $table->foreign('invoice_id')->on('invoices')->references('invoice_id')
+                ->onDelete('CASCADE')
+                ->onUpdate('CASCADE');
             $table->integer('item_id');
             $table->string('vin');
             $table->string('brend');

@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Filters\V1\CustomersFilters;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
-use App\Models\Customer;
-use App\Http\Controllers\Controller;
+use App\Http\Resources\V1\CustomerCollection;
 use App\Http\Resources\V1\CustomerResource;
+use App\Models\Customer;
+use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
@@ -15,19 +18,21 @@ class CustomerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Customer::paginate(10);
-    }
+        $filter= new CustomersFilters();
+        $queryItems=$filter->transform($request);//[['column','operator','value']]
+        $customers=Customer::where($queryItems);
+        $includeInvoices=$request->query('includeInvoices');
+        if($includeInvoices){
+            $customers=$customers->with('invoices');
+        }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+//        \DB::enableQueryLog(); // Enable query log
+//        $customers->get();
+//        dd(\DB::getQueryLog()); // Show results of log
+        return new CustomerCollection($customers->paginate()->appends($request->query()));
+
     }
 
     /**
@@ -38,7 +43,7 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request)
     {
-        //
+        return new CustomerResource(Customer::create($request->all()));
     }
 
     /**
@@ -47,20 +52,19 @@ class CustomerController extends Controller
      * @param  \App\Models\Customer  $customer
      * @return \Illuminate\Http\Response
      */
-    public function show(Customer $customer)
+    public function show(Customer $customer,Request $request)
     {
-        return new CustomerResource($customer);
-    }
+        $includeInvoices=$request->query('includeInvoices');
+        if($includeInvoices){
+            $customers=$customer->with('invoices');
+        }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Customer  $customer
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Customer $customer)
-    {
-        //
+//        \DB::enableQueryLog(); // Enable query log
+//        $customers->get();
+//        dd(\DB::getQueryLog()); // Show results of log
+//        return new CustomerCollection($customers->paginate()->appends($request->query()));
+//        return new CustomerResource($customer);
+        return new CustomerResource($customers);
     }
 
     /**

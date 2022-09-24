@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->integer('customer_id');
-            $table->string('invoice_id');
+            $table->string('invoice_id',8)->unique();
             $table->string('status'); //Billed, Paid, Void
             $table->dateTime('invoice_date');
             $table->dateTime('invoice_due_date');

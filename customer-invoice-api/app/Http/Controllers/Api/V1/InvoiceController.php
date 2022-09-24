@@ -2,32 +2,33 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Filters\V1\InvoicesFilters;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
+use App\Http\Resources\V1\InvoiceCollection;
 use App\Models\Invoice;
-use App\Http\Controllers\Controller;
-use App\Http\Resource\V1\Customer;
+use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return InvoiceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Invoice::paginate(15);
-    }
+        $filter= new InvoicesFilters();
+        $queryItems=$filter->transform($request);//[['column','operator','value']]
+        $includeInvoiceItems=$request->query('invoiceItems');
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $invoices=Invoice::where($queryItems);
+        if($includeInvoiceItems){
+            $customers=$invoices->with('invoiceitems');
+        }
+
+        return new InvoiceCollection($invoices->paginate()->appends($request->query()));
     }
 
     /**
@@ -49,18 +50,7 @@ class InvoiceController extends Controller
      */
     public function show(Invoice  $invoice)
     {
-        return $invoice;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Invoice  $invoice
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Invoice $invoice)
-    {
-        //
+        return new InvoiceCollection($invoice);
     }
 
     /**
