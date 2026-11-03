@@ -1,4 +1,7 @@
 # RESTAPI-Laravel
+
+![Views](https://hits.sh/github.com/RasimAghayev/RESTAPI-Laravel.svg?label=views&color=0e75b6)
+
 # POSTMAN
 
 [![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/36cc1e266722a67ae009?action=collection%2Fimport)
