@@ -9,10 +9,15 @@ use App\Http\Requests\UpdateInvoiceItemsRequest;
 use App\Http\Resources\V1\InvoiceItemsCollection;
 use App\Http\Resources\V1\InvoiceItemsResource;
 use App\Models\InvoiceItems;
+use App\Services\InvoiceItemsService;
 use Illuminate\Http\Request;
 
 class InvoiceItemsController extends Controller
 {
+    public function __construct(
+        protected InvoiceItemsService $invoiceItemsService
+    ) {}
+
     public function index(Request $request)
     {
         $filter = new InvoiceItemsFilters();
@@ -27,7 +32,9 @@ class InvoiceItemsController extends Controller
 
     public function store(StoreInvoiceItemsRequest $request)
     {
-        return new InvoiceItemsResource(InvoiceItems::create($request->all()));
+        $item = $this->invoiceItemsService->createItem($request->validated());
+
+        return new InvoiceItemsResource($item);
     }
 
     public function show(Request $request, InvoiceItems $invoiceItem)
@@ -37,14 +44,14 @@ class InvoiceItemsController extends Controller
 
     public function update(UpdateInvoiceItemsRequest $request, InvoiceItems $invoiceItem)
     {
-        $invoiceItem->update($request->all());
+        $item = $this->invoiceItemsService->updateItem($invoiceItem, $request->validated());
 
-        return new InvoiceItemsResource($invoiceItem->fresh());
+        return new InvoiceItemsResource($item);
     }
 
     public function destroy(InvoiceItems $invoiceItem)
     {
-        $invoiceItem->delete();
+        $this->invoiceItemsService->deleteItem($invoiceItem);
 
         return response()->noContent();
     }

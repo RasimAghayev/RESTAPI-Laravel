@@ -9,10 +9,15 @@ use App\Http\Requests\UpdateCustomerRequest;
 use App\Http\Resources\V1\CustomerCollection;
 use App\Http\Resources\V1\CustomerResource;
 use App\Models\Customer;
+use App\Services\CustomerService;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
+    public function __construct(
+        protected CustomerService $customerService
+    ) {}
+
     public function index(Request $request)
     {
         $filter = new CustomersFilters();
@@ -31,7 +36,9 @@ class CustomerController extends Controller
 
     public function store(StoreCustomerRequest $request)
     {
-        return new CustomerResource(Customer::create($request->all()));
+        $customer = $this->customerService->createCustomer($request->validated());
+
+        return new CustomerResource($customer);
     }
 
     public function show(Request $request, Customer $customer)
@@ -45,14 +52,14 @@ class CustomerController extends Controller
 
     public function update(UpdateCustomerRequest $request, Customer $customer)
     {
-        $customer->update($request->all());
+        $customer = $this->customerService->updateCustomer($customer, $request->validated());
 
-        return new CustomerResource($customer->fresh());
+        return new CustomerResource($customer);
     }
 
     public function destroy(Customer $customer)
     {
-        $customer->delete();
+        $this->customerService->deleteCustomer($customer);
 
         return response()->noContent();
     }

@@ -9,10 +9,15 @@ use App\Http\Requests\UpdateInvoiceRequest;
 use App\Http\Resources\V1\InvoiceCollection;
 use App\Http\Resources\V1\InvoiceResource;
 use App\Models\Invoice;
+use App\Services\InvoiceService;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
+    public function __construct(
+        protected InvoiceService $invoiceService
+    ) {}
+
     public function index(Request $request)
     {
         $filter = new InvoicesFilters();
@@ -31,7 +36,17 @@ class InvoiceController extends Controller
 
     public function store(StoreInvoiceRequest $request)
     {
-        return new InvoiceResource(Invoice::create($request->all()));
+        $data = $request->validated();
+        $items = collect($data['items'] ?? []);
+        unset($data['items']);
+
+        $invoice = $this->invoiceService->createInvoice($data, $items);
+
+        if ($request->query('includeItems')) {
+            $invoice = $invoice->load('invoiceitems');
+        }
+
+        return new InvoiceResource($invoice);
     }
 
     public function show(Request $request, Invoice $invoice)
@@ -45,9 +60,15 @@ class InvoiceController extends Controller
 
     public function update(UpdateInvoiceRequest $request, Invoice $invoice)
     {
-        $invoice->update($request->all());
+        $data = $request->validated();
 
-        return new InvoiceResource($invoice->fresh());
+        $invoice = $this->invoiceService->updateInvoice($invoice, $data);
+
+        if ($request->query('includeItems')) {
+            $invoice = $invoice->load('invoiceitems');
+        }
+
+        return new InvoiceResource($invoice);
     }
 
     public function destroy(Invoice $invoice)

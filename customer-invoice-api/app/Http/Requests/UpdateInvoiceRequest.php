@@ -6,25 +6,20 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateInvoiceRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+    public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
-            //
+            'customer_id' => 'sometimes|exists:customers,id',
+            'status' => 'sometimes|in:Billed,Paid,Void',
+            'invoice_date' => 'sometimes|date',
+            'invoice_due_date' => 'sometimes|date|after_or_equal:invoice_date',
+            'percentage' => 'nullable|integer|min:0|max:100',
+            'amountPaid' => 'nullable|integer|min:0',
         ];
     }
 }
