@@ -15,7 +15,6 @@ class StoreInvoiceItemsRequest extends FormRequest
     {
         return [
             'invoice_id' => 'required|exists:invoices,invoice_id',
-            'customer_id' => 'required|exists:customers,id',
             'item_id' => 'required|integer',
             'vin' => 'required|string|max:17',
             'brend' => 'required|string|max:255',

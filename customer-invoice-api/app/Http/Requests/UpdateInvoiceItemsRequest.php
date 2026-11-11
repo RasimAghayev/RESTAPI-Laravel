@@ -15,7 +15,6 @@ class UpdateInvoiceItemsRequest extends FormRequest
     {
         return [
             'invoice_id' => 'sometimes|exists:invoices,invoice_id',
-            'customer_id' => 'sometimes|exists:customers,id',
             'item_id' => 'sometimes|integer',
             'vin' => 'sometimes|string|max:17',
             'brend' => 'sometimes|string|max:255',
