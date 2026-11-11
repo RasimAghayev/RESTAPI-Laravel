@@ -13,5 +13,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('v1')->group(function () {
     Route::apiResource('customers', CustomerController::class);
     Route::apiResource('invoices', InvoiceController::class);
-    Route::apiResource('invoiceitems', InvoiceItemsController::class);
+    Route::apiResource('invoiceitems', InvoiceItemsController::class)
+        ->only(['index', 'store', 'show']);
 });

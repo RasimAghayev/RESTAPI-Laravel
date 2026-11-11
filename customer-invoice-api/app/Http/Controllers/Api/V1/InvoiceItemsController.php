@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Filters\V1\InvoiceItemsFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreInvoiceItemsRequest;
-use App\Http\Requests\UpdateInvoiceItemsRequest;
 use App\Http\Resources\V1\InvoiceItemsCollection;
 use App\Http\Resources\V1\InvoiceItemsResource;
 use App\Models\InvoiceItems;
@@ -40,19 +39,5 @@ class InvoiceItemsController extends Controller
     public function show(Request $request, InvoiceItems $invoiceItem)
     {
         return new InvoiceItemsResource($invoiceItem);
-    }
-
-    public function update(UpdateInvoiceItemsRequest $request, InvoiceItems $invoiceItem)
-    {
-        $item = $this->invoiceItemsService->updateItem($invoiceItem, $request->validated());
-
-        return new InvoiceItemsResource($item);
-    }
-
-    public function destroy(InvoiceItems $invoiceItem)
-    {
-        $this->invoiceItemsService->deleteItem($invoiceItem);
-
-        return response()->noContent();
     }
 }
