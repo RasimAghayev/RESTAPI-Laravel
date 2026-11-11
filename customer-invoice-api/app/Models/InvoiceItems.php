@@ -10,10 +10,10 @@ class InvoiceItems extends Model
     use HasFactory;
 
     public function invoceitemscustomer(){
-        return $this->belongTo(Customer::class);
+        return $this->belongsTo(Customer::class);
     }
 
     public function invoice(){
-        return $this->belongTo(Invoice::class);
+        return $this->belongsTo(Invoice::class);
     }
 }

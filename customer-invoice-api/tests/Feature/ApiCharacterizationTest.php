@@ -21,11 +21,8 @@ class ApiCharacterizationTest extends TestCase
 
     protected function setUp(): void
     {
-        config([
-            'database.default' => 'sqlite',
-            'database.connections.sqlite.database' => ':memory:',
-        ]);
         parent::setUp();
+        $this->artisan('migrate', ['--force' => true])->run();
     }
 
     /** @see GET /api/v1/customers */

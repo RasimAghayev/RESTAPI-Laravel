@@ -1,4 +1,4 @@
-.git/
+﻿.git/
 .idea/
 .vscode/
 .env
@@ -7,8 +7,10 @@
 *.key
 /storage/*
 /bootstrap/cache/*.php
-/vendor/
-/node_modules/
+vendor/
+**/vendor/
+node_modules/
+**/node_modules/
 /public/build/
 /public/hot/
 /public/storage/

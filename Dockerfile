@@ -1,21 +1,21 @@
 # syntax=docker/dockerfile:1
-# Phase 5 container baseline — RESTAPI-Laravel
+# Phase 5 container baseline — RESTAPI-Laravel (updated Phase 6)
 # Multi-stage: base -> deps -> build -> test -> runtime
 # The Laravel application lives under customer-invoice-api/; build context is the repo root.
 
 # ------------------------------------------------------------------
 # base — pinned runtime image, system deps, PHP extensions
 # ------------------------------------------------------------------
-ARG PHP_VERSION=8.2
-FROM php:${PHP_VERSION}-fpm-alpine@sha256:d17bc39b8ef90e12d598f19cb466f1906c3c214f4bce661dfee49404b42fea09 AS base
+ARG PHP_VERSION=8.5
+FROM php:${PHP_VERSION}-fpm-alpine@sha256:951fb5b1780219b81d5daffa4cebef8e0077c537f3893d9790a5dfcd66ca334d AS base
 
 ENV COMPOSER_ALLOW_SUPERUSER=1 \
     COMPOSER_HOME=/tmp/composer \
     APP_ENV=production
 
-RUN apk add --no-cache git unzip zip icu-dev libzip-dev \
-    && docker-php-ext-install intl zip pcntl \
-    && docker-php-ext-enable intl zip pcntl
+RUN apk add --no-cache git unzip zip icu-dev libzip-dev sqlite-dev \
+    && docker-php-ext-install intl zip pcntl pdo_sqlite \
+    && docker-php-ext-enable intl zip pcntl pdo_sqlite
 
 COPY --from=composer:2@sha256:ca11f643d7791ebdd90a34fc20caf11380d434007ae539a9ea75cd9212e13dca /usr/bin/composer /usr/bin/composer
 
@@ -29,12 +29,12 @@ FROM base AS deps
 COPY customer-invoice-api/composer.json customer-invoice-api/composer.lock ./
 
 RUN --mount=type=cache,target=/root/.composer/cache \
-    composer install --no-interaction --prefer-dist --optimize-autoloader
+    composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts --no-plugins
 
 # ------------------------------------------------------------------
 # build — frontend assets (Vite)
 # ------------------------------------------------------------------
-FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS build
+FROM node:22-alpine@sha256:0e1754758c2df4cfa3e68d59e2e1b7374bb7fd9ea6328eaaacf15cc934af8202 AS build
 WORKDIR /var/www/html
 
 COPY customer-invoice-api/package.json ./
@@ -60,10 +60,12 @@ ENV DB_CONNECTION=sqlite \
     MAIL_MAILER=array \
     TELESCOPE_ENABLED=false
 
-RUN php artisan key:generate --force 2>/dev/null || true \
+RUN composer dump-autoload --optimize --no-interaction --no-scripts \
+    && php artisan key:generate --force --ansi 2>/dev/null || true \
+    && php artisan package:discover --ansi 2>/dev/null || true \
     && php artisan migrate --force 2>/dev/null || true
 
-RUN vendor/bin/phpunit --no-coverage
+RUN php vendor/phpunit/phpunit/phpunit --no-coverage
 
 # ------------------------------------------------------------------
 # runtime — slim php-fpm image without dev tooling
@@ -75,7 +77,8 @@ COPY customer-invoice-api/ ./
 COPY --from=build /var/www/html/public/build ./public/build
 
 # Prune dev dependencies for a lean runtime image
-RUN composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader \
+RUN composer install --no-interaction --prefer-dist --no-dev --optimize-autoloader --no-scripts --no-plugins \
+    && composer dump-autoload --optimize --no-interaction --no-dev --no-scripts 2>/dev/null || true \
     && addgroup -g 1000 laravel && adduser -D -G laravel -u 1000 laravel \
     && mkdir -p /var/www/html/storage/framework/cache /var/www/html/storage/framework/sessions /var/www/html/storage/framework/views /var/www/html/bootstrap/cache /run/nginx \
     && chown -R laravel:laravel /var/www/html \
