@@ -2,15 +2,20 @@
 
 namespace App\Services;
 
+use App\Contracts\InvoiceItemsRepositoryInterface;
 use App\Models\InvoiceItems;
 
 class InvoiceItemsService
 {
+    public function __construct(
+        protected InvoiceItemsRepositoryInterface $invoiceItemsRepository
+    ) {}
+
     public function createItem(array $data): InvoiceItems
     {
         $data['cemi'] = $data['sayi'] * $data['qiymeti'];
 
-        return InvoiceItems::create($data);
+        return $this->invoiceItemsRepository->create($data);
     }
 
     public function updateItem(InvoiceItems $item, array $data): InvoiceItems
@@ -19,13 +24,11 @@ class InvoiceItemsService
             $data['cemi'] = ($data['sayi'] ?? $item->sayi) * ($data['qiymeti'] ?? $item->qiymeti);
         }
 
-        $item->update($data);
-
-        return $item->fresh();
+        return $this->invoiceItemsRepository->update($item, $data);
     }
 
     public function deleteItem(InvoiceItems $item): void
     {
-        $item->delete();
+        $this->invoiceItemsRepository->delete($item);
     }
 }

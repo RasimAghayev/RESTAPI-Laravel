@@ -2,12 +2,19 @@
 
 namespace App\Services;
 
+use App\Contracts\InvoiceItemsRepositoryInterface;
+use App\Contracts\InvoiceRepositoryInterface;
 use App\Models\Invoice;
 use App\Models\InvoiceItems;
 use Illuminate\Support\Collection;
 
 class InvoiceService
 {
+    public function __construct(
+        protected InvoiceRepositoryInterface $invoiceRepository,
+        protected InvoiceItemsRepositoryInterface $invoiceItemsRepository
+    ) {}
+
     public function calculateTotals(Collection $items): array
     {
         $subTotal = $items->sum('cemi');
@@ -39,13 +46,13 @@ class InvoiceService
     {
         $totals = $this->calculateTotals($items);
 
-        $invoice = Invoice::create(array_merge($data, $totals));
+        $invoice = $this->invoiceRepository->create(array_merge($data, $totals));
 
         foreach ($items as $item) {
             $item['invoice_id'] = $invoice->invoice_id;
             $item['customer_id'] = $invoice->customer_id;
             $item['cemi'] = $item['sayi'] * $item['qiymeti'];
-            InvoiceItems::create($item);
+            $this->invoiceItemsRepository->create($item);
         }
 
         return $invoice->fresh();
@@ -53,8 +60,6 @@ class InvoiceService
 
     public function updateInvoice(Invoice $invoice, array $data): Invoice
     {
-        $invoice->update($data);
-
-        return $invoice->fresh();
+        return $this->invoiceRepository->update($invoice, $data);
     }
 }
