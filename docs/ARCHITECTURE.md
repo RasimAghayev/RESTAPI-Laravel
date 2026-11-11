@@ -76,15 +76,15 @@ HTTP Request
 
 ## 2. Phase 8 Improvements (Applied)
 
-### 2.1 DRY: BaseApiController
+### 2.1 DRY: Controller Deduplication (Deferred — Trait Crash)
 **ADR**: `docs/adr/001-base-api-controller.md`  
-**Why here**: Three controllers share identical CRUD scaffolding (index filtering, resource wrapping, 404 handling). A base controller eliminates ~150 lines of duplication while keeping customization points (filters, resources, model) configurable.
+**Why here**: Three controllers share identical CRUD scaffolding (index filtering, resource wrapping, 404 handling). A base controller/trait would eliminate ~150 lines of duplication.
 
-**Changes**:
-- New `App\Http\Controllers\Api\V1\BaseApiController` with generic `index`, `store`, `show`, `update`, `destroy`
-- Concrete controllers declare `$modelClass`, `$filterClass`, `$resourceClass`, `$collectionClass`
-- `index()` uses filter → paginate → collection; `store()` validates via FormRequest → create → resource
-- `show()`/`update()`/`destroy()` use route-model binding + resource
+**Attempted**: `ApiCrudTrait` with abstract methods (`getModelClass()`, `getFilterClass()`, etc.) — crashed with "Premature end of PHP process" in Docker test stage (PHP 8.5). Same crash with `BaseApiController` class inheritance.
+
+**Fallback**: Controllers extend `Controller` directly with explicit inline CRUD methods. No abstraction layer. Duplication remains (~120 lines across 3 controllers) but tests pass reliably.
+
+**Status**: Deferred. Revisit when PHP 8.5 trait/abstract method stability improves or Laravel provides official CRUD base.
 
 ### 2.2 SOLID (SRP + DIP): Service Layer
 **ADR**: `docs/adr/002-service-layer.md`  
@@ -140,7 +140,7 @@ All changes verified with `make verify` (Docker build + test stage) after each c
 
 | Commit | Change | `make verify` |
 |--------|--------|---------------|
-| (1) | BaseApiController + controller refactor | ✅ |
+| e25db28 | Inline CRUD methods (DRY deferred — trait crashes) | ✅ |
 | (2) | Service layer (InvoiceService, etc.) | ✅ |
 | (3) | Repository interfaces + Eloquent implementations | ✅ |
 | (4) | Remove empty methods, implement via services | ✅ |
