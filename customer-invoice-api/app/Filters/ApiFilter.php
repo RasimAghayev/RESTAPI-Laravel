@@ -6,9 +6,6 @@ use Illuminate\Http\Request;
 
 class ApiFilter
 {
-    /*protected $allowedParms=[
-      'postCode'=>['eq','gt','lt']
-    ];*/
     protected $safeParms=[];
     protected $columnMap=[];
     protected $operatorMap=[

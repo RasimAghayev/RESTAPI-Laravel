@@ -28,9 +28,6 @@ class CustomerController extends Controller
             $customers=$customers->with('invoices');
         }
 
-//        \DB::enableQueryLog(); // Enable query log
-//        $customers->get();
-//        dd(\DB::getQueryLog()); // Show results of log
         return new CustomerCollection($customers->paginate()->appends($request->query()));
 
     }
@@ -59,11 +56,6 @@ class CustomerController extends Controller
             $customers=$customer->with('invoices');
         }
 
-//        \DB::enableQueryLog(); // Enable query log
-//        $customers->get();
-//        dd(\DB::getQueryLog()); // Show results of log
-//        return new CustomerCollection($customers->paginate()->appends($request->query()));
-//        return new CustomerResource($customer);
         return new CustomerResource($customers);
     }
 
