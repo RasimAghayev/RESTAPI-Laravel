@@ -141,10 +141,10 @@ All changes verified with `make verify` (Docker build + test stage) after each c
 | Commit | Change | `make verify` |
 |--------|--------|---------------|
 | e25db28 | Inline CRUD methods (DRY deferred — trait crashes) | ✅ |
-| (2) | Service layer (InvoiceService, etc.) | ✅ |
-| (3) | Repository interfaces + Eloquent implementations | ✅ |
-| (4) | Remove empty methods, implement via services | ✅ |
-| (5) | Fix model relationships, remove redundant FK | ✅ |
+| a62c7b2 | Service layer (InvoiceService, CustomerService, InvoiceItemsService) | ✅ |
+| c19f7d4 | Repository interfaces + Eloquent implementations | ✅ |
+| 307906a | Remove empty update/destroy on InvoiceItemsController | ✅ |
+| c5728a2 | Fix model relationships, remove redundant FK | ✅ |
 
 ## 4. Out-of-Scope Findings (for later phases)
 
