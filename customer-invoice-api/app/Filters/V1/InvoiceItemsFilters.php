@@ -6,10 +6,6 @@ use App\Filters\ApiFilter;
 
 class InvoiceItemsFilters extends ApiFilter
 {
-    /*protected $allowedParms=[
-      'postCode'=>['eq','gt','lt']
-    ];
-    */
     protected $safeParms=[
         'customerId'=>['eq'],
         'invoiceId'=>['eq'],

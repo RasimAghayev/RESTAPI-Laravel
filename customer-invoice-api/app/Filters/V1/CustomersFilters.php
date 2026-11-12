@@ -6,9 +6,6 @@ use App\Filters\ApiFilter;
 
 class CustomersFilters extends ApiFilter
 {
-    /*protected $allowedParms=[
-      'postCode'=>['eq','gt','lt']
-    ];*/
     protected $safeParms=[
         'name'=>['eq'],
         'type'=>['eq'], //Individual or Business

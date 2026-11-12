@@ -9,11 +9,13 @@ class InvoiceItems extends Model
 {
     use HasFactory;
 
-    public function invoceitemscustomer(){
-        return $this->belongTo(Customer::class);
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
     }
 
-    public function invoice(){
-        return $this->belongTo(Invoice::class);
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
     }
 }

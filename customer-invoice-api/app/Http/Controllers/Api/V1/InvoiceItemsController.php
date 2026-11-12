@@ -5,73 +5,39 @@ namespace App\Http\Controllers\Api\V1;
 use App\Filters\V1\InvoiceItemsFilters;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreInvoiceItemsRequest;
-use App\Http\Requests\UpdateInvoiceItemsRequest;
 use App\Http\Resources\V1\InvoiceItemsCollection;
+use App\Http\Resources\V1\InvoiceItemsResource;
 use App\Models\InvoiceItems;
+use App\Services\InvoiceItemsService;
 use Illuminate\Http\Request;
 
 class InvoiceItemsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function __construct(
+        protected InvoiceItemsService $invoiceItemsService
+    ) {}
+
     public function index(Request $request)
     {
-        $filter= new InvoiceItemsFilters();
-        $queryItems=$filter->transform($request);//[['column','operator','value']]
+        $filter = new InvoiceItemsFilters();
+        $queryItems = $filter->transform($request);
 
-        if (count($queryItems)==0){
-            return new InvoiceItemsCollection(InvoiceItems::paginate());
-        }else{
-            $invoiceitems=InvoiceItems::where($queryItems)->paginate();
-            return new InvoiceItemsCollection($invoiceitems->appends($request->query()));
-        }
+        $query = InvoiceItems::query()->where($queryItems);
+
+        $paginator = $query->paginate()->appends($request->query());
+
+        return new InvoiceItemsCollection($paginator);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreInvoiceItemsRequest  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(StoreInvoiceItemsRequest $request)
     {
-        //
+        $item = $this->invoiceItemsService->createItem($request->validated());
+
+        return new InvoiceItemsResource($item);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\InvoiceItems  $invoiceItems
-     * @return \Illuminate\Http\Response
-     */
-    public function show(InvoiceItems $invoiceItems)
+    public function show(Request $request, InvoiceItems $invoiceItem)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateInvoiceItemsRequest  $request
-     * @param  \App\Models\InvoiceItems  $invoiceItems
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateInvoiceItemsRequest $request, InvoiceItems $invoiceItems)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\InvoiceItems  $invoiceItems
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(InvoiceItems $invoiceItems)
-    {
-        //
+        return new InvoiceItemsResource($invoiceItem);
     }
 }
