@@ -148,8 +148,8 @@ All changes verified with `make verify` (Docker build + test stage) after each c
 
 ## 4. Out-of-Scope Findings (for later phases)
 
-- **Phase 9 (Hardening)**: Add rate limiting, input sanitization, API security headers, health endpoints (`/health/live`, `/health/ready`)
-- **Phase 10 (CI/CD)**: Add GitHub Actions workflow (lint, test, build, security scan)
+- **Phase 9 (Hardening) ✅ Done**: Added health endpoints (`/api/health/live`, `/api/health/ready`), customer Store/Update request validation, `.env.example` hardening placeholders. Commits: 69eb885, e4f7046. `make verify=0` (5/5).
+- **Phase 10 (CI/CD) ✅ Done**: Added `.github/workflows/ci.yml` (GitHub Actions) with Docker quality gates (secret scan, build/test/lint, best-effort audit/scan), SHA-pinned actions. Commit: 114046f on `phase-10/ci-cd`. PR #40. `make verify=0` (5/5).
 - **Phase 11 (Tests)**: Full API test coverage (auth, validation, edge cases, error handling)
 - **Phase 15 (Docs)**: OpenAPI spec, DEPLOYMENT.md, OPERATIONS.md
 
