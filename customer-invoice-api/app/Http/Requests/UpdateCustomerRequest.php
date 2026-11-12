@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Requests;
 
@@ -6,25 +6,21 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateCustomerRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+    public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, mixed>
-     */
-    public function rules()
+    public function rules(): array
     {
         return [
-            //
+            'name' => 'sometimes|required|string|max:255',
+            'type' => 'sometimes|required|in:I,B',
+            'email' => 'sometimes|required|email|max:255',
+            'address' => 'sometimes|required|string|max:255',
+            'city' => 'sometimes|required|string|max:255',
+            'state' => 'sometimes|required|string|max:255',
+            'postal_code' => 'sometimes|required|string|max:255',
         ];
     }
 }
