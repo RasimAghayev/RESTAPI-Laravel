@@ -52,7 +52,8 @@ FROM deps AS test
 
 COPY customer-invoice-api/ ./
 
-ENV DB_CONNECTION=sqlite \
+ENV APP_ENV=testing \
+    DB_CONNECTION=sqlite \
     DB_DATABASE=:memory: \
     CACHE_DRIVER=array \
     SESSION_DRIVER=array \
