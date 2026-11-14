@@ -26,7 +26,7 @@ class EloquentInvoiceItemsRepository implements InvoiceItemsRepositoryInterface
 
     public function create(array $data): InvoiceItems
     {
-        return InvoiceItems::create($data);
+        return InvoiceItems::create($data)->fresh();
     }
 
     public function update(InvoiceItems $item, array $data): InvoiceItems
